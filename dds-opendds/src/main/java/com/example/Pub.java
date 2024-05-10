@@ -1,5 +1,6 @@
 package com.example;
 
+import java.io.File;
 import java.util.stream.IntStream;
 
 import org.omg.CORBA.StringSeqHolder;
@@ -54,10 +55,10 @@ public class Pub implements Runnable {
 	public Pub() {
 		
 		// CREATE PARTICIPANT
-		//URL urlResource = Pub.class.getClassLoader().getResource("D:\\WORKSPACES\\SENTINEL\\dds-opendds\\src\\main\\resources\\rtsp.ini");
+		File file = new File("rtsp.ini");
 		String[] args = new String[2];
 		args[0] = "-DCPSConfigFile";
-		args[1] = "D:\\WORKSPACES\\SENTINEL\\dds-opendds\\src\\main\\resources\\rtsp.ini";
+		args[1] = file.getPath();
 
 		StringSeqHolder stringSeqHolder = new StringSeqHolder(args);
 		domainParticipantFactory = TheParticipantFactory.WithArgs(stringSeqHolder);
