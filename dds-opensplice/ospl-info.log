@@ -1,0 +1,78 @@
+========================================================================================
+Report      : INFO
+Date        : 2024-05-10T09:12:40+0200
+Description : ---------------------------------------------------------------
+              -- The service is using the following configuration settings --
+              ---------------------------------------------------------------
+              Domain (id)          : ospl_sp_ddsi (0)
+              Storage              : 0 Kbytes
+              Storage threshold    : 1024 Kbytes
+              Storage address      : Not available
+              Locking              : default
+              Memory mode          : Heap memory
+              Builtin topics       : true
+              Priority inheritance : false
+              SystemId             : 674875497 from [1,2147483647]
+Node        : UHS1382
+Process     : javaw.exe <8028>
+Thread      : spliced 35624
+Internals   : 6.9.210323OSS///The OpenSplice domain service/u_domain.c/785/0/1715325160.197719300/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-10T09:12:40+0200
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'splicedaemon' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : UHS1382
+Process     : javaw.exe <8028>
+Thread      : spliced 35624
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1715325160.198715800/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-10T09:12:40+0200
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'ddsi2' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : UHS1382
+Process     : javaw.exe <8028>
+Thread      : ddsi2 14176
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1715325160.232508900/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-10T09:12:45+0200
+Description : ---------------------------------------------------------------
+              -- The service is using the following configuration settings --
+              ---------------------------------------------------------------
+              Domain (id)          : ospl_sp_ddsi (0)
+              Storage              : 0 Kbytes
+              Storage threshold    : 1024 Kbytes
+              Storage address      : Not available
+              Locking              : default
+              Memory mode          : Heap memory
+              Builtin topics       : true
+              Priority inheritance : false
+              SystemId             : 213009971 from [1,2147483647]
+Node        : UHS1382
+Process     : javaw.exe <11344>
+Thread      : spliced 34132
+Internals   : 6.9.210323OSS///The OpenSplice domain service/u_domain.c/785/0/1715325165.503010200/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-10T09:12:45+0200
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'splicedaemon' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : UHS1382
+Process     : javaw.exe <11344>
+Thread      : spliced 34132
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1715325165.504240000/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-10T09:12:45+0200
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'ddsi2' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : UHS1382
+Process     : javaw.exe <11344>
+Thread      : ddsi2 37568
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1715325165.531782100/0

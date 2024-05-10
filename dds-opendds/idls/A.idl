@@ -1,0 +1,14 @@
+module com{
+	module example {
+		module dds {
+			module a {
+			@topic
+				struct A {
+					@key string id;
+					string name;
+				};
+			};
+		};
+	};
+};
+

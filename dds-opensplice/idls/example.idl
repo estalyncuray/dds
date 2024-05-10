@@ -1,0 +1,16 @@
+// package dds.Example
+
+module com{
+	module example {
+		module dds {
+			module a {
+				struct A {
+					int id;
+					string name;
+				};
+				#pragma keylist A id
+			};
+		};
+	};
+};
+
