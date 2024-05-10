@@ -22,5 +22,9 @@
     <Compatibility>
       <StandardsConformance>lax</StandardsConformance>
     </Compatibility>
+	<Tracing>
+        <AppendToFile>false</AppendToFile>
+        <Verbosity>fine</Verbosity>
+    </Tracing>    
   </DDSI2Service>
 </OpenSplice>
