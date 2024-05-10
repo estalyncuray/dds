@@ -1,0 +1,26 @@
+<OpenSplice>
+  <Domain>
+    <Name>ospl_sp_ddsi</Name>
+    <Id>0</Id>
+    <SingleProcess>true</SingleProcess>
+    <Service name="ddsi2">
+      <Command>ddsi2</Command>
+    </Service>
+    <Report append="false" verbosity="info" />
+  </Domain>
+  <DDSI2Service name="ddsi2">
+    <General>
+      <NetworkInterfaceAddress>AUTO</NetworkInterfaceAddress>
+      <AllowMulticast>true</AllowMulticast>
+      <EnableMulticastLoopback>true</EnableMulticastLoopback>
+      <CoexistWithNativeNetworking>false</CoexistWithNativeNetworking>
+    </General>
+    <Discovery>
+      <ParticipantIndex>auto</ParticipantIndex>
+      <SPDPInterval>30 s</SPDPInterval>
+    </Discovery>
+    <Compatibility>
+      <StandardsConformance>lax</StandardsConformance>
+    </Compatibility>
+  </DDSI2Service>
+</OpenSplice>
