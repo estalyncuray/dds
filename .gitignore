@@ -49,3 +49,4 @@ local.properties
 idls/classes/*
 idls/com
 idls/Release
+!*.log
