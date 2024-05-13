@@ -66,12 +66,15 @@ public class Sub implements Runnable, DataReaderListener {
 			domainParticipantQosHolder.value = new DomainParticipantQos();
 			domainParticipantFactory.get_default_participant_qos(domainParticipantQosHolder);
 			domainParticipantFactory.set_default_participant_qos(domainParticipantQosHolder.value);
-			domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, STATUS_MASK_NONE.value);
+			domainParticipant = domainParticipantFactory.lookup_participant(0);
 			if(domainParticipant == null)
 			{
-				System.err.println("domain_participant");
-				return;
+				domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, STATUS_MASK_NONE.value);
+				System.out.println("created domain_participant");
+			}else {
+				System.out.println("lookup_participant");
 			}
+			
 			
 		// REGISTER TOPIC
 			ATypeSupport aTypeSupport = new ATypeSupport();

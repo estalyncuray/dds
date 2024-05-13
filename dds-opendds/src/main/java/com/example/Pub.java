@@ -12,6 +12,7 @@ import com.example.dds.a.ATypeSupport;
 import com.example.dds.a.ATypeSupportImpl;
 
 import DDS.DATAWRITER_QOS_DEFAULT;
+import DDS.DataRepresentationIdSeqHolder;
 import DDS.DataWriter;
 import DDS.DataWriterQosHolder;
 import DDS.DomainParticipant;
@@ -25,6 +26,7 @@ import DDS.RETCODE_OK;
 import DDS.TOPIC_QOS_DEFAULT;
 import DDS.Topic;
 import DDS.TopicQosHolder;
+import DDS.XCDR_DATA_REPRESENTATION;
 import OpenDDS.DCPS.NO_STATUS_MASK;
 import OpenDDS.DCPS.TheParticipantFactory;
 
@@ -45,6 +47,7 @@ public class Pub implements Runnable {
 	private TopicQosHolder topicQosHolder = new TopicQosHolder();
 	private PublisherQosHolder publisherQosHolder = new PublisherQosHolder();
 	private DataWriterQosHolder dataWriterQosHolder = new DataWriterQosHolder();
+	private DataRepresentationIdSeqHolder dataRepresentationIdSeqHolder = new DataRepresentationIdSeqHolder();
 
 	public static void main(String[] args) {
 		Pub publisher = new Pub();
@@ -53,7 +56,7 @@ public class Pub implements Runnable {
 	}
 
 	public Pub() {
-		
+	
 		// CREATE PARTICIPANT
 		File file = new File("rtsp.ini");
 		String[] args = new String[2];
@@ -62,15 +65,22 @@ public class Pub implements Runnable {
 
 		StringSeqHolder stringSeqHolder = new StringSeqHolder(args);
 		domainParticipantFactory = TheParticipantFactory.WithArgs(stringSeqHolder);
-		
+		domainParticipantFactory.get_instance();
 		domainParticipantQosHolder.value = PARTICIPANT_QOS_DEFAULT.get();
 		domainParticipantFactory.get_default_participant_qos(domainParticipantQosHolder);
+		
 		domainParticipantFactory.set_default_participant_qos(domainParticipantQosHolder.value);
-		domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, NO_STATUS_MASK.value);
+		domainParticipant = domainParticipantFactory.lookup_participant(0);
 		if (domainParticipant == null) {
-			System.err.println("domain_participant");
-			return;
+			domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, NO_STATUS_MASK.value);	
+			System.out.println("created domain_participant");
+		}else {
+			System.out.println("lookup_participant");
 		}
+		
+		//DATA REPRESENTATION XCDR1
+		dataRepresentationIdSeqHolder.value = new short[1];
+		dataRepresentationIdSeqHolder.value[0] = XCDR_DATA_REPRESENTATION.value;
 
 		// REGISTER TOPIC
 		ATypeSupport aTypeSupport = new ATypeSupportImpl();
@@ -80,6 +90,7 @@ public class Pub implements Runnable {
 		// CREATE TOPIC
 		topicQosHolder.value = TOPIC_QOS_DEFAULT.get();
 		domainParticipant.get_default_topic_qos(topicQosHolder);
+		topicQosHolder.value.representation.value = dataRepresentationIdSeqHolder.value;
 		domainParticipant.set_default_topic_qos(topicQosHolder.value);
 		topic = domainParticipant.create_topic(TOPIC_NAME, typeName, topicQosHolder.value, null, NO_STATUS_MASK.value);
 		if (topic == null) {
@@ -102,6 +113,7 @@ public class Pub implements Runnable {
 		dataWriterQosHolder.value = DATAWRITER_QOS_DEFAULT.get();
 		publisher.get_default_datawriter_qos(dataWriterQosHolder);
 		publisher.copy_from_topic_qos(dataWriterQosHolder, topicQosHolder.value);
+		dataWriterQosHolder.value.representation.value = dataRepresentationIdSeqHolder.value;
 		publisher.set_default_datawriter_qos(dataWriterQosHolder.value);
 		dataWriter = publisher.create_datawriter(topic, dataWriterQosHolder.value, null, NO_STATUS_MASK.value);
 		if (dataWriter == null) {
@@ -113,7 +125,7 @@ public class Pub implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public final void run() {
 		if(active) {
 			IntStream.range(0, MAX_MSG).forEach(i -> {
 				sendData(i);
@@ -126,7 +138,7 @@ public class Pub implements Runnable {
 		}		
 	}
 	
-	private void sendData(int i) {
+	private final void sendData(int i) {
 		
 		A a = new A("id "+ i, "name " + i);
 		
