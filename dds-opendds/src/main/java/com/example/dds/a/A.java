@@ -1,7 +1,7 @@
 package com.example.dds.a;
-public final class A implements java.io.Serializable {
-  public String id;
-  public String name;
+public final class A{
+  public String id = "";
+  public String name = "";
 
   public A() {}
 
