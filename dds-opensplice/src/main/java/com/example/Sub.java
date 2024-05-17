@@ -10,6 +10,7 @@ import com.example.dds.a.ATypeSupport;
 import DDS.ANY_INSTANCE_STATE;
 import DDS.ANY_VIEW_STATE;
 import DDS.DATA_AVAILABLE_STATUS;
+import DDS.DOMAIN_ID_DEFAULT;
 import DDS.DataReader;
 import DDS.DataReaderListener;
 import DDS.DataReaderQos;
@@ -18,9 +19,14 @@ import DDS.DomainParticipant;
 import DDS.DomainParticipantFactory;
 import DDS.DomainParticipantQos;
 import DDS.DomainParticipantQosHolder;
+import DDS.DurabilityQosPolicyKind;
+import DDS.HistoryQosPolicyKind;
 import DDS.LENGTH_UNLIMITED;
 import DDS.LivelinessChangedStatus;
+import DDS.LivelinessQosPolicyKind;
 import DDS.NOT_READ_SAMPLE_STATE;
+import DDS.OwnershipQosPolicyKind;
+import DDS.ReliabilityQosPolicyKind;
 import DDS.RequestedDeadlineMissedStatus;
 import DDS.RequestedIncompatibleQosStatus;
 import DDS.STATUS_MASK_NONE;
@@ -37,7 +43,6 @@ import DDS.TopicQosHolder;
 
 public class Sub implements Runnable, DataReaderListener {
 
-	private static final String TOPIC_NAME = "A";
 	private DomainParticipantFactory domainParticipantFactory;
 	private DomainParticipant domainParticipant;
 	private Subscriber subscriber;
@@ -66,10 +71,10 @@ public class Sub implements Runnable, DataReaderListener {
 			domainParticipantQosHolder.value = new DomainParticipantQos();
 			domainParticipantFactory.get_default_participant_qos(domainParticipantQosHolder);
 			domainParticipantFactory.set_default_participant_qos(domainParticipantQosHolder.value);
-			domainParticipant = domainParticipantFactory.lookup_participant(0);
+			domainParticipant = domainParticipantFactory.lookup_participant(DOMAIN_ID_DEFAULT.value);
 			if(domainParticipant == null)
 			{
-				domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, STATUS_MASK_NONE.value);
+				domainParticipant = domainParticipantFactory.create_participant(DOMAIN_ID_DEFAULT.value, domainParticipantQosHolder.value, null, STATUS_MASK_NONE.value);
 				System.out.println("created domain_participant");
 			}else {
 				System.out.println("lookup_participant");
@@ -85,8 +90,16 @@ public class Sub implements Runnable, DataReaderListener {
 			//topicQosHolder.value = TOPIC_QOS_DEFAULT.value;
 			topicQosHolder.value = new TopicQos();
 			domainParticipant.get_default_topic_qos(topicQosHolder);
+			// start topic qos
+			topicQosHolder.value.reliability.kind = ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
+			topicQosHolder.value.durability.kind = DurabilityQosPolicyKind.VOLATILE_DURABILITY_QOS;
+			topicQosHolder.value.ownership.kind = OwnershipQosPolicyKind.SHARED_OWNERSHIP_QOS;
+			topicQosHolder.value.liveliness.kind = LivelinessQosPolicyKind.AUTOMATIC_LIVELINESS_QOS;
+			topicQosHolder.value.liveliness.lease_duration.sec = 0;
+			topicQosHolder.value.liveliness.lease_duration.nanosec =1;
+			// end topic qos
 			domainParticipant.set_default_topic_qos(topicQosHolder.value);
-			topic = domainParticipant.create_topic(TOPIC_NAME, typeName, topicQosHolder.value, null, STATUS_MASK_NONE.value);
+			topic = domainParticipant.create_topic("A", typeName, topicQosHolder.value, null, STATUS_MASK_NONE.value);
 			if(topic == null) {
 				System.err.println("topic");
 				return;
@@ -95,8 +108,10 @@ public class Sub implements Runnable, DataReaderListener {
 			//subscriberQosHolder.value = SUBSCRIBER_QOS_DEFAULT.value;
 			subscriberQosHolder.value = new SubscriberQos();
 			domainParticipant.get_default_subscriber_qos(subscriberQosHolder);
+			// start subscriber qos
 			subscriberQosHolder.value.partition.name = new String[1];
 			subscriberQosHolder.value.partition.name[0] = "example";
+			// end subscriber qos
 			domainParticipant.set_default_subscriber_qos(subscriberQosHolder.value);
 			subscriber = domainParticipant.create_subscriber(subscriberQosHolder.value, null, STATUS_MASK_NONE.value);
 			if(subscriber == null) {
@@ -109,20 +124,28 @@ public class Sub implements Runnable, DataReaderListener {
 			dataReaderQosHolder.value = new DataReaderQos();
 			subscriber.get_default_datareader_qos(dataReaderQosHolder);
 			subscriber.copy_from_topic_qos(dataReaderQosHolder, topicQosHolder.value);
+			// start data reader qos
+			dataReaderQosHolder.value.durability.kind = DurabilityQosPolicyKind.VOLATILE_DURABILITY_QOS;
+			dataReaderQosHolder.value.reliability.kind = ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
+			dataReaderQosHolder.value.history.kind = HistoryQosPolicyKind.KEEP_ALL_HISTORY_QOS;
+
+			dataReaderQosHolder.value.liveliness.kind = LivelinessQosPolicyKind.AUTOMATIC_LIVELINESS_QOS;
+			dataReaderQosHolder.value.liveliness.lease_duration.sec = 0;
+			dataReaderQosHolder.value.liveliness.lease_duration.nanosec = 1;
+			// end data reader qos
 			subscriber.set_default_datareader_qos(dataReaderQosHolder.value);
 			dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, this, DATA_AVAILABLE_STATUS.value);
 			if(dataReader == null) {
 				System.err.println("data_reader");
 			}
 			active = true;
-	}
-	
+	}	
 	
 	@Override
 	public void run() {
 		while (active) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -187,5 +210,5 @@ public class Sub implements Runnable, DataReaderListener {
 	}
 	
 	
-
+	
 }

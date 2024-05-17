@@ -31,7 +31,9 @@ import DDS.DataReaderQosHolder;
 import DDS.DomainParticipant;
 import DDS.DomainParticipantFactory;
 import DDS.DomainParticipantQosHolder;
+import DDS.LIVELINESS_CHANGED_STATUS;
 import DDS.LivelinessChangedStatus;
+import DDS.LivelinessQosPolicyKind;
 import DDS.NOT_READ_SAMPLE_STATE;
 import DDS.PARTICIPANT_QOS_DEFAULT;
 import DDS.RETCODE_OK;
@@ -124,8 +126,9 @@ public class Sub implements Runnable, DataReaderListener {
 		dataReaderQosHolder.value = DATAREADER_QOS_DEFAULT.get();
 		subscriber.get_default_datareader_qos(dataReaderQosHolder);
 		subscriber.copy_from_topic_qos(dataReaderQosHolder, topicQosHolder.value);
+		dataReaderQosHolder.value.liveliness.kind = LivelinessQosPolicyKind.AUTOMATIC_LIVELINESS_QOS;
 		subscriber.set_default_datareader_qos(dataReaderQosHolder.value);
-		dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, this, DATA_AVAILABLE_STATUS.value);
+		dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, this, DATA_AVAILABLE_STATUS.value | LIVELINESS_CHANGED_STATUS.value);
 		if (dataReader == null) {
 			System.err.println("data_writer");
 			return;
