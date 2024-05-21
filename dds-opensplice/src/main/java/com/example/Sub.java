@@ -2,15 +2,9 @@ package com.example;
 
 import java.util.stream.IntStream;
 
-import com.example.dds.a.A;
-import com.example.dds.a.ADataReader;
-import com.example.dds.a.ASeqHolder;
-import com.example.dds.a.ATypeSupport;
-
 import DDS.ANY_INSTANCE_STATE;
 import DDS.ANY_VIEW_STATE;
 import DDS.DATA_AVAILABLE_STATUS;
-import DDS.DOMAIN_ID_DEFAULT;
 import DDS.DataReader;
 import DDS.DataReaderListener;
 import DDS.DataReaderQos;
@@ -19,16 +13,13 @@ import DDS.DomainParticipant;
 import DDS.DomainParticipantFactory;
 import DDS.DomainParticipantQos;
 import DDS.DomainParticipantQosHolder;
-import DDS.DurabilityQosPolicyKind;
-import DDS.HistoryQosPolicyKind;
 import DDS.LENGTH_UNLIMITED;
+import DDS.LIVELINESS_CHANGED_STATUS;
 import DDS.LivelinessChangedStatus;
-import DDS.LivelinessQosPolicyKind;
 import DDS.NOT_READ_SAMPLE_STATE;
-import DDS.OwnershipQosPolicyKind;
-import DDS.ReliabilityQosPolicyKind;
 import DDS.RequestedDeadlineMissedStatus;
 import DDS.RequestedIncompatibleQosStatus;
+import DDS.STATUS_MASK_ANY_V1_2;
 import DDS.STATUS_MASK_NONE;
 import DDS.SampleInfoSeqHolder;
 import DDS.SampleLostStatus;
@@ -71,10 +62,10 @@ public class Sub implements Runnable, DataReaderListener {
 			domainParticipantQosHolder.value = new DomainParticipantQos();
 			domainParticipantFactory.get_default_participant_qos(domainParticipantQosHolder);
 			domainParticipantFactory.set_default_participant_qos(domainParticipantQosHolder.value);
-			domainParticipant = domainParticipantFactory.lookup_participant(DOMAIN_ID_DEFAULT.value);
+			domainParticipant = domainParticipantFactory.lookup_participant(0);
 			if(domainParticipant == null)
 			{
-				domainParticipant = domainParticipantFactory.create_participant(DOMAIN_ID_DEFAULT.value, domainParticipantQosHolder.value, null, STATUS_MASK_NONE.value);
+				domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, STATUS_MASK_NONE.value);
 				System.out.println("created domain_participant");
 			}else {
 				System.out.println("lookup_participant");
@@ -82,7 +73,7 @@ public class Sub implements Runnable, DataReaderListener {
 			
 			
 		// REGISTER TOPIC
-			ATypeSupport aTypeSupport = new ATypeSupport();
+			MyTopicTypeSupport aTypeSupport = new MyTopicTypeSupport();
 			String typeName = aTypeSupport.get_type_name();
 			aTypeSupport.register_type(domainParticipant, typeName);
 			
@@ -91,26 +82,21 @@ public class Sub implements Runnable, DataReaderListener {
 			topicQosHolder.value = new TopicQos();
 			domainParticipant.get_default_topic_qos(topicQosHolder);
 			// start topic qos
-			topicQosHolder.value.reliability.kind = ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-			topicQosHolder.value.durability.kind = DurabilityQosPolicyKind.VOLATILE_DURABILITY_QOS;
-			topicQosHolder.value.ownership.kind = OwnershipQosPolicyKind.SHARED_OWNERSHIP_QOS;
-			topicQosHolder.value.liveliness.kind = LivelinessQosPolicyKind.AUTOMATIC_LIVELINESS_QOS;
-			topicQosHolder.value.liveliness.lease_duration.sec = 0;
-			topicQosHolder.value.liveliness.lease_duration.nanosec =1;
 			// end topic qos
 			domainParticipant.set_default_topic_qos(topicQosHolder.value);
-			topic = domainParticipant.create_topic("A", typeName, topicQosHolder.value, null, STATUS_MASK_NONE.value);
+			topic = domainParticipant.create_topic("MyTopic", typeName, topicQosHolder.value, null, STATUS_MASK_NONE.value);
 			if(topic == null) {
 				System.err.println("topic");
 				return;
 			}
+
 		//CREATE SUBSCRIBER
 			//subscriberQosHolder.value = SUBSCRIBER_QOS_DEFAULT.value;
 			subscriberQosHolder.value = new SubscriberQos();
 			domainParticipant.get_default_subscriber_qos(subscriberQosHolder);
 			// start subscriber qos
 			subscriberQosHolder.value.partition.name = new String[1];
-			subscriberQosHolder.value.partition.name[0] = "example";
+			subscriberQosHolder.value.partition.name[0] = "estalyn";
 			// end subscriber qos
 			domainParticipant.set_default_subscriber_qos(subscriberQosHolder.value);
 			subscriber = domainParticipant.create_subscriber(subscriberQosHolder.value, null, STATUS_MASK_NONE.value);
@@ -125,16 +111,10 @@ public class Sub implements Runnable, DataReaderListener {
 			subscriber.get_default_datareader_qos(dataReaderQosHolder);
 			subscriber.copy_from_topic_qos(dataReaderQosHolder, topicQosHolder.value);
 			// start data reader qos
-			dataReaderQosHolder.value.durability.kind = DurabilityQosPolicyKind.VOLATILE_DURABILITY_QOS;
-			dataReaderQosHolder.value.reliability.kind = ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-			dataReaderQosHolder.value.history.kind = HistoryQosPolicyKind.KEEP_ALL_HISTORY_QOS;
-
-			dataReaderQosHolder.value.liveliness.kind = LivelinessQosPolicyKind.AUTOMATIC_LIVELINESS_QOS;
-			dataReaderQosHolder.value.liveliness.lease_duration.sec = 0;
-			dataReaderQosHolder.value.liveliness.lease_duration.nanosec = 1;
 			// end data reader qos
 			subscriber.set_default_datareader_qos(dataReaderQosHolder.value);
-			dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, this, DATA_AVAILABLE_STATUS.value);
+			dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, null, STATUS_MASK_NONE.value);
+			dataReader.set_listener(this, DATA_AVAILABLE_STATUS.value);
 			if(dataReader == null) {
 				System.err.println("data_reader");
 			}
@@ -145,7 +125,7 @@ public class Sub implements Runnable, DataReaderListener {
 	public void run() {
 		while (active) {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -156,12 +136,12 @@ public class Sub implements Runnable, DataReaderListener {
 	
 	@Override
 	public void on_data_available(DataReader reader) {
-		ASeqHolder aSeqHolder = new ASeqHolder();
+		MyTopicSeqHolder aSeqHolder = new MyTopicSeqHolder();
 		SampleInfoSeqHolder sampleInfoSeqHolder = new SampleInfoSeqHolder();
 		// BE AWARE OF INVALID SAMPLES, READ ONLY FRESH DATA
-		((ADataReader) dataReader).read(aSeqHolder, sampleInfoSeqHolder, LENGTH_UNLIMITED.value, NOT_READ_SAMPLE_STATE.value, ANY_VIEW_STATE.value, ANY_INSTANCE_STATE.value);
+		((MyTopicDataReader) dataReader).read(aSeqHolder, sampleInfoSeqHolder, LENGTH_UNLIMITED.value, NOT_READ_SAMPLE_STATE.value, ANY_VIEW_STATE.value, ANY_INSTANCE_STATE.value);
 		
-		A[] data = aSeqHolder.value;
+		MyTopic[] data = aSeqHolder.value;
 		
 		IntStream.range(0, data.length)
 		.filter(i -> sampleInfoSeqHolder.value[i].valid_data)
@@ -170,7 +150,7 @@ public class Sub implements Runnable, DataReaderListener {
 			System.out.println("id: " + validData.id + " name : " + validData.name);
 		});
 		
-		((ADataReader) dataReader).return_loan(aSeqHolder, sampleInfoSeqHolder);
+		((MyTopicDataReader) dataReader).return_loan(aSeqHolder, sampleInfoSeqHolder);
 	}
 
 	@Override

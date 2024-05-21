@@ -14,13 +14,6 @@ import org.omg.CORBA.Request;
 import org.omg.CORBA.SetOverrideType;
 import org.omg.CORBA.StringSeqHolder;
 
-import com.example.dds.a.A;
-import com.example.dds.a.ADataReader;
-import com.example.dds.a.ADataReaderHelper;
-import com.example.dds.a.AHolder;
-import com.example.dds.a.ATypeSupport;
-import com.example.dds.a.ATypeSupportImpl;
-
 import DDS.ANY_INSTANCE_STATE;
 import DDS.ANY_VIEW_STATE;
 import DDS.DATAREADER_QOS_DEFAULT;
@@ -31,12 +24,16 @@ import DDS.DataReaderQosHolder;
 import DDS.DomainParticipant;
 import DDS.DomainParticipantFactory;
 import DDS.DomainParticipantQosHolder;
+import DDS.DurabilityQosPolicyKind;
+import DDS.HistoryQosPolicyKind;
 import DDS.LIVELINESS_CHANGED_STATUS;
 import DDS.LivelinessChangedStatus;
 import DDS.LivelinessQosPolicyKind;
 import DDS.NOT_READ_SAMPLE_STATE;
+import DDS.OwnershipQosPolicyKind;
 import DDS.PARTICIPANT_QOS_DEFAULT;
 import DDS.RETCODE_OK;
+import DDS.ReliabilityQosPolicyKind;
 import DDS.RequestedDeadlineMissedStatus;
 import DDS.RequestedIncompatibleQosStatus;
 import DDS.SUBSCRIBER_QOS_DEFAULT;
@@ -50,18 +47,19 @@ import DDS.SubscriptionMatchedStatus;
 import DDS.TOPIC_QOS_DEFAULT;
 import DDS.Topic;
 import DDS.TopicQosHolder;
+import DDS.XCDR2_DATA_REPRESENTATION;
+import DDS.XCDR_DATA_REPRESENTATION;
+import OpenDDS.DCPS.ALL_STATUS_MASK;
 import OpenDDS.DCPS.NO_STATUS_MASK;
 import OpenDDS.DCPS.TheParticipantFactory;
 
 public class Sub implements Runnable, DataReaderListener {
 
-	private static final String TOPIC_NAME = "A";
 	private DomainParticipantFactory domainParticipantFactory;
 	private DomainParticipant domainParticipant;
 	private Topic topic;
 	private DataReader dataReader;
 	private Subscriber subscriber;
-	private ADataReader readerHelper;
 	private boolean active = false;
 
 	// QoS
@@ -86,54 +84,66 @@ public class Sub implements Runnable, DataReaderListener {
 
 		StringSeqHolder stringSeqHolder = new StringSeqHolder(args);
 		domainParticipantFactory = TheParticipantFactory.WithArgs(stringSeqHolder);
-		
+		domainParticipantFactory.get_instance();
 		domainParticipantQosHolder.value = PARTICIPANT_QOS_DEFAULT.get();
 		domainParticipantFactory.get_default_participant_qos(domainParticipantQosHolder);
 		domainParticipantFactory.set_default_participant_qos(domainParticipantQosHolder.value);
-		domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, NO_STATUS_MASK.value);
+		domainParticipant = domainParticipantFactory.lookup_participant(0);
 		if (domainParticipant == null) {
-			System.err.println("domain_participant");
-			return;
+			domainParticipant = domainParticipantFactory.create_participant(0, domainParticipantQosHolder.value, null, NO_STATUS_MASK.value);
+			System.out.println("created domain_participant");
+		}else {
+			System.out.println("lookup_participant");
 		}
 
 		// REGISTER TOPIC
-		ATypeSupport aTypeSupport = new ATypeSupportImpl();
+		MyTopicTypeSupport aTypeSupport = new MyTopicTypeSupportImpl();
 		String typeName = aTypeSupport.get_type_name();
 		aTypeSupport.register_type(domainParticipant, typeName);
 
 		// CREATE TOPIC
 		topicQosHolder.value = TOPIC_QOS_DEFAULT.get();
 		domainParticipant.get_default_topic_qos(topicQosHolder);
+		// start topic qos
+		
+		topicQosHolder.value.representation.value = new short[1];
+		topicQosHolder.value.representation.value[0] = XCDR_DATA_REPRESENTATION.value;
+		// end topic qos
 		domainParticipant.set_default_topic_qos(topicQosHolder.value);
-		topic = domainParticipant.create_topic(TOPIC_NAME, typeName, topicQosHolder.value, null, NO_STATUS_MASK.value);
+		
+		topic = domainParticipant.create_topic("MyTopic", typeName, topicQosHolder.value, null, NO_STATUS_MASK.value);
 		if (topic == null) {
 			System.err.println("topic");
-			return;
 		}
 		// CREATE SUBSCRIBER
 		subscriberQosHolder.value = SUBSCRIBER_QOS_DEFAULT.get();
 		domainParticipant.get_default_subscriber_qos(subscriberQosHolder);
+		// start subscriber qos
 		subscriberQosHolder.value.partition.name = new String[1];
-		subscriberQosHolder.value.partition.name[0] = "example";
+		subscriberQosHolder.value.partition.name[0] = "estalyn";
+		// end subscriber qos
 		domainParticipant.set_default_subscriber_qos(subscriberQosHolder.value);
 		subscriber = domainParticipant.create_subscriber(subscriberQosHolder.value, null, NO_STATUS_MASK.value);
 		if (subscriber == null) {
-			System.err.println("publisher");
-			return;
+			System.err.println("subscriber");
 		}
 
 		// CREATE DATA READER
 		dataReaderQosHolder.value = DATAREADER_QOS_DEFAULT.get();
 		subscriber.get_default_datareader_qos(dataReaderQosHolder);
 		subscriber.copy_from_topic_qos(dataReaderQosHolder, topicQosHolder.value);
-		dataReaderQosHolder.value.liveliness.kind = LivelinessQosPolicyKind.AUTOMATIC_LIVELINESS_QOS;
+		// start dataReader qos
+		
+		dataReaderQosHolder.value.representation.value = new short[1];
+		dataReaderQosHolder.value.representation.value[0] = XCDR_DATA_REPRESENTATION.value;
+		
+		// end dataReader qos
 		subscriber.set_default_datareader_qos(dataReaderQosHolder.value);
-		dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, this, DATA_AVAILABLE_STATUS.value | LIVELINESS_CHANGED_STATUS.value);
+		dataReader = subscriber.create_datareader(topic, dataReaderQosHolder.value, null, NO_STATUS_MASK.value);
+		dataReader.set_listener(this, DATA_AVAILABLE_STATUS.value | LIVELINESS_CHANGED_STATUS.value);
 		if (dataReader == null) {
 			System.err.println("data_writer");
-			return;
 		}
-		readerHelper = ADataReaderHelper.narrow(dataReader);
 		active = true;
 	}
 
@@ -150,11 +160,12 @@ public class Sub implements Runnable, DataReaderListener {
 
 	@Override
 	public void on_data_available(DataReader arg0) {
-		A a = new A();
+		MyTopicDataReader readerHelper = MyTopicDataReaderHelper.narrow(arg0);
+		MyTopic a = new MyTopic();
 		a.id = "";
 		a.name = "";
 		
-		AHolder mh = new AHolder(a);
+		MyTopicHolder mh = new MyTopicHolder(a);
 		SampleInfo si = new SampleInfo(NOT_READ_SAMPLE_STATE.value, ANY_VIEW_STATE.value, ANY_INSTANCE_STATE.value,
 				new DDS.Time_t(), 0, 0, 0, 0, 0, 0, 0, false, 0L);
 		SampleInfoHolder sih = new SampleInfoHolder(si);
@@ -162,7 +173,7 @@ public class Sub implements Runnable, DataReaderListener {
 		
 		if(status == RETCODE_OK.value) {
 			if(sih.value.valid_data) {
-				A validData = mh.value;
+				MyTopic validData = mh.value;
 				System.out.println("id: " + validData.id + " name : " + validData.name);
 			}
 		}

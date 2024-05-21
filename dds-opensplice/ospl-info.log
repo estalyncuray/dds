@@ -1,10 +1,10 @@
 ========================================================================================
 Report      : INFO
-Date        : 2024-05-13T11:52:34+0200
+Date        : 2024-05-21T17:41:19+0200
 Description : ---------------------------------------------------------------
               -- The service is using the following configuration settings --
               ---------------------------------------------------------------
-              Domain (id)          : ospl_sp_ddsi (0)
+              Domain (id)          : estalyn (0)
               Storage              : 0 Kbytes
               Storage threshold    : 1024 Kbytes
               Storage address      : Not available
@@ -12,36 +12,67 @@ Description : ---------------------------------------------------------------
               Memory mode          : Heap memory
               Builtin topics       : true
               Priority inheritance : false
-              SystemId             : 1039992697 from [1,2147483647]
+              SystemId             : 386819820 from [1,2147483647]
 Node        : UHS1382
-Process     : javaw.exe <34860>
-Thread      : spliced 28024
-Internals   : 6.9.210323OSS///The OpenSplice domain service/u_domain.c/785/0/1715593954.033445800/0
+Process     : javaw.exe <19144>
+Thread      : spliced 11384
+Internals   : 6.9.210323OSS///The OpenSplice domain service/u_domain.c/785/0/1716306079.308388500/0
 ========================================================================================
 Report      : INFO
-Date        : 2024-05-13T11:52:34+0200
+Date        : 2024-05-21T17:41:19+0200
 Description : ++++++++++++++++++++++++++++++++++++++++++++++++
               ++ The service 'splicedaemon' is now operational. 
               ++++++++++++++++++++++++++++++++++++++++++++++++
 Node        : UHS1382
-Process     : javaw.exe <34860>
-Thread      : spliced 28024
-Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1715593954.034473700/0
+Process     : javaw.exe <19144>
+Thread      : spliced 11384
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1716306079.311328600/0
 ========================================================================================
 Report      : INFO
-Date        : 2024-05-13T11:52:34+0200
+Date        : 2024-05-21T17:41:19+0200
 Description : ++++++++++++++++++++++++++++++++++++++++++++++++
               ++ The service 'ddsi2' is now operational. 
               ++++++++++++++++++++++++++++++++++++++++++++++++
 Node        : UHS1382
-Process     : javaw.exe <34860>
-Thread      : ddsi2 22208
-Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1715593954.076629300/0
+Process     : javaw.exe <19144>
+Thread      : ddsi2 29604
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1716306079.387773100/0
 ========================================================================================
 Report      : INFO
-Date        : 2024-05-13T11:59:55+0200
-Description : Missed heartbeat for node 1627778316. (DCPSPublication is not complete)
+Date        : 2024-05-21T17:41:26+0200
+Description : ---------------------------------------------------------------
+              -- The service is using the following configuration settings --
+              ---------------------------------------------------------------
+              Domain (id)          : estalyn (0)
+              Storage              : 0 Kbytes
+              Storage threshold    : 1024 Kbytes
+              Storage address      : Not available
+              Locking              : default
+              Memory mode          : Heap memory
+              Builtin topics       : true
+              Priority inheritance : false
+              SystemId             : 1330265693 from [1,2147483647]
 Node        : UHS1382
-Process     : javaw.exe <34860>
-Thread      : OSPL Garbage Collector 25836
-Internals   : 6.9.210323OSS///v_spliced/v_spliced.c/2062/781/1715594395.470084900/0
+Process     : javaw.exe <17660>
+Thread      : spliced 12080
+Internals   : 6.9.210323OSS///The OpenSplice domain service/u_domain.c/785/0/1716306086.271590300/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-21T17:41:26+0200
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'splicedaemon' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : UHS1382
+Process     : javaw.exe <17660>
+Thread      : spliced 12080
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1716306086.272889600/0
+========================================================================================
+Report      : INFO
+Date        : 2024-05-21T17:41:26+0200
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'ddsi2' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : UHS1382
+Process     : javaw.exe <17660>
+Thread      : ddsi2 22592
+Internals   : 6.9.210323OSS///v_serviceChangeState/v_service.c/266/0/1716306086.342372500/0

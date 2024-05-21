@@ -2,10 +2,6 @@ package com.example;
 
 import java.util.stream.IntStream;
 
-import com.example.dds.a.A;
-import com.example.dds.a.ADataWriter;
-import com.example.dds.a.ATypeSupport;
-
 import DDS.DATA_AVAILABLE_STATUS;
 import DDS.DataWriter;
 import DDS.DataWriterQos;
@@ -25,14 +21,12 @@ import DDS.TopicQosHolder;
 
 public class Pub implements Runnable {
 
-	private static final String TOPIC_NAME = "A";
 	private static final int MAX_MSG = 150;
 	private DomainParticipantFactory domainParticipantFactory;
 	private DomainParticipant domainParticipant;
 	private Publisher publisher;
 	private Topic topic;
 	private DataWriter dataWriter;
-	private ADataWriter writerHelper;
 	private boolean active = false;
 	
 	// QoS
@@ -64,7 +58,7 @@ public class Pub implements Runnable {
 			}
 			
 		// REGISTER TOPIC
-			ATypeSupport aTypeSupport = new ATypeSupport();
+			MyTopicTypeSupport aTypeSupport = new MyTopicTypeSupport();
 			String typeName = aTypeSupport.get_type_name();
 			aTypeSupport.register_type(domainParticipant, typeName);
 			
@@ -73,7 +67,7 @@ public class Pub implements Runnable {
 			topicQosHolder.value = new TopicQos();
 			domainParticipant.get_default_topic_qos(topicQosHolder);
 			domainParticipant.set_default_topic_qos(topicQosHolder.value);
-			topic = domainParticipant.create_topic(TOPIC_NAME, typeName, topicQosHolder.value, null, STATUS_MASK_NONE.value);
+			topic = domainParticipant.create_topic("MyTopic", typeName, topicQosHolder.value, null, STATUS_MASK_NONE.value);
 			if(topic == null) {
 				System.err.println("topic");
 				return;
@@ -84,7 +78,7 @@ public class Pub implements Runnable {
 			publisherQosHolder.value = new PublisherQos();
 			domainParticipant.get_default_publisher_qos(publisherQosHolder);
 			publisherQosHolder.value.partition.name = new String[1];
-			publisherQosHolder.value.partition.name[0] = "example";
+			publisherQosHolder.value.partition.name[0] = "estalyn";
 			domainParticipant.set_default_publisher_qos(publisherQosHolder.value);
 			publisher = domainParticipant.create_publisher(publisherQosHolder.value, null, STATUS_MASK_NONE.value);
 			if(publisher == null) {
@@ -98,11 +92,10 @@ public class Pub implements Runnable {
 			publisher.get_default_datawriter_qos(dataWriterQosHolder);
 			publisher.copy_from_topic_qos(dataWriterQosHolder, topicQosHolder.value);
 			publisher.set_default_datawriter_qos(dataWriterQosHolder.value);
-			dataWriter = publisher.create_datawriter(topic, dataWriterQosHolder.value, null, DATA_AVAILABLE_STATUS.value);
+			dataWriter = publisher.create_datawriter(topic, dataWriterQosHolder.value, null, STATUS_MASK_NONE.value);
 			if(dataWriter == null) {
 				System.err.println("data_reader");
 			}
-			writerHelper = ((ADataWriter) dataWriter);
 			active = true;
 	}
 	
@@ -123,8 +116,9 @@ public class Pub implements Runnable {
 	}
 	
 	private void sendData(int i) {
+		MyTopicDataWriter writerHelper = ((MyTopicDataWriter) dataWriter);
 		
-		A a = new A("id "+ i, "name " + i);
+		MyTopic a = new MyTopic("id "+ i, "name " + i);
 		
 		long handle = writerHelper.register_instance(a);
 		int status = writerHelper.write(a, handle);
