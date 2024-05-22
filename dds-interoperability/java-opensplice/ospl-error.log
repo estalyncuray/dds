@@ -1,0 +1,22 @@
+========================================================================================
+Report      : ERROR
+Date        : 2024-05-22T17:33:56+0200
+Description : Failed to open meta configuration file "ospl_metaconfig.xml".
+              The file was not found in the current directory nor
+              could the file be found at the default location because
+              the environment variable OSPL_HOME was not set
+Node        : UHS1382
+Process     : javaw.exe <5296>
+Thread      : spliced 24408
+Internals   : 6.9.210323OSS///configuration validator/cfg_validator.c/935/0/1716392036.736331000/0
+========================================================================================
+Report      : ERROR
+Date        : 2024-05-22T17:34:04+0200
+Description : Failed to open meta configuration file "ospl_metaconfig.xml".
+              The file was not found in the current directory nor
+              could the file be found at the default location because
+              the environment variable OSPL_HOME was not set
+Node        : UHS1382
+Process     : javaw.exe <27484>
+Thread      : spliced 27376
+Internals   : 6.9.210323OSS///configuration validator/cfg_validator.c/935/0/1716392044.636940300/0

@@ -1,0 +1,42 @@
+<OpenSplice>
+    <Domain>
+        <Name>MyTopicPartition</Name>
+        <Id>0</Id>
+        <SingleProcess>true</SingleProcess>
+        <Service name="ddsi2">
+            <Command>ddsi2</Command>
+            <FailureAction>restart</FailureAction>
+        </Service>
+        <Lease>
+            <ExpiryTime update_factor="0.2">50.0</ExpiryTime>
+        </Lease>
+        <Daemon>
+            <Heartbeat>
+                <ExpiryTime update_factor="0.25">20.0</ExpiryTime>
+            </Heartbeat>
+        </Daemon>
+        <Report append="false" verbosity="INFO"/>
+    </Domain>
+    <DDSI2Service name="ddsi2">
+        <General>
+            <NetworkInterfaceAddress>AUTO</NetworkInterfaceAddress>
+            <AllowMulticast>true</AllowMulticast>
+            <EnableMulticastLoopback>true</EnableMulticastLoopback>
+            <CoexistWithNativeNetworking>false</CoexistWithNativeNetworking>
+        </General>
+        <Discovery>
+            <ParticipantIndex>none</ParticipantIndex>
+            <SPDPInterval>30 s</SPDPInterval>
+        </Discovery>
+        <Internal>
+            <SquashParticipants>true</SquashParticipants>
+        </Internal>
+        <Compatibility>
+            <StandardsConformance>lax</StandardsConformance>
+        </Compatibility>
+		<Tracing>
+            <AppendToFile>false</AppendToFile>
+            <Verbosity>finest</Verbosity>
+        </Tracing>
+    </DDSI2Service>
+</OpenSplice>

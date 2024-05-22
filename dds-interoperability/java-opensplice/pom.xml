@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>java-opensplice</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>java-opensplice</name>
+	<description>java-opensplice</description>
+
+	<properties>
+		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+		<java.version>17</java.version>
+		<maven.compiler.release>17</maven.compiler.release>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+	</properties>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.glassfish.corba</groupId>
+			<artifactId>glassfish-corba-orb</artifactId>
+			<version>4.2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opensplice</groupId>
+			<artifactId>dcpssaj</artifactId>
+			<version>2.9.210323</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/dcpssaj.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+						<release>${maven.compiler.release}</release>
+						<encoding>${maven.compiler.encoding}</encoding>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+
+	</dependencies>
+
+</project>
