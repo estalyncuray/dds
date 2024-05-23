@@ -10,8 +10,8 @@
 
 	<properties>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-		<java.version>17</java.version>
-		<maven.compiler.release>17</maven.compiler.release>
+		<java.version>21</java.version>
+		<maven.compiler.release>21</maven.compiler.release>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
 
@@ -25,11 +25,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.opensplice</groupId>
+			<groupId>org.opensplice.dds.api.dcps.java.saj</groupId>
 			<artifactId>dcpssaj</artifactId>
-			<version>2.9.210323</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/dcpssaj.jar</systemPath>
+			<version>1.0</version>
 		</dependency>
 
 		<dependency>
@@ -37,21 +35,20 @@
 			<artifactId>commons-exec</artifactId>
 			<version>1.4.0</version>
 		</dependency>
-
-		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven-compiler-plugin.version}</version>
-					<configuration>
-						<release>${maven.compiler.release}</release>
-						<encoding>${maven.compiler.encoding}</encoding>
-					</configuration>
-				</plugin>
-			</plugins>
-		</build>
-
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<release>${maven.compiler.release}</release>
+					<encoding>${maven.compiler.encoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
