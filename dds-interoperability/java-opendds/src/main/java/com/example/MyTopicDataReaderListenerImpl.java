@@ -5,6 +5,7 @@ import DDS.SampleInfoHolder;
 import org.omg.CORBA.*;
 import org.omg.CORBA.Object;
 
+
 public class MyTopicDataReaderListenerImpl extends GenericDataReaderListenerImpl<MyTopic, MyTopicDataReader> {
 
     @Override
@@ -18,7 +19,7 @@ public class MyTopicDataReaderListenerImpl extends GenericDataReaderListenerImpl
     }
 
     @Override
-    protected int readNextSample(MyTopicDataReader dataReader, SampleHolder<MyTopic> data, SampleInfoHolder info) {
+    protected int readNextSample(MyTopicDataReader dataReader, TopicHolder<MyTopic> data, SampleInfoHolder info) {
         MyTopicHolder holder = new MyTopicHolder(data.value);
         return dataReader.read_next_sample(holder, info);
     }

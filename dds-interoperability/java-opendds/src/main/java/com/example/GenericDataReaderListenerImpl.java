@@ -11,8 +11,6 @@ import DDS.SampleInfoHolder;
 import DDS.SampleLostStatus;
 import DDS.SampleRejectedStatus;
 import DDS.SubscriptionMatchedStatus;
-import OpenDDS.DCPS.BudgetExceededStatus;
-import OpenDDS.DCPS.SubscriptionLostStatus;
 
 public abstract class GenericDataReaderListenerImpl<T, DR extends DataReader> implements DataReaderListener {
 
@@ -20,16 +18,17 @@ public abstract class GenericDataReaderListenerImpl<T, DR extends DataReader> im
 
     protected abstract void onDataAvailable(T data);
 
-    protected abstract int readNextSample(DR dataReader, SampleHolder<T> data, SampleInfoHolder info);
+    protected abstract int readNextSample(DR dataReader, TopicHolder<T> data, SampleInfoHolder info);
 
     @Override
     public void on_data_available(DataReader dataReader) {
         DR specificDataReader = narrow(dataReader);
 
         T initial = createInitialSample();
-        SampleInfo sampleInfo = new SampleInfo();
+        SampleInfo sampleInfo = new SampleInfo(0, 0, 0,
+                new DDS.Time_t(), 0, 0, 0, 0, 0, 0, 0, false,0L);
         SampleInfoHolder sampleInfoHolder = new SampleInfoHolder(sampleInfo);
-        SampleHolder<T> sampleHolder = new SampleHolder<>(initial);
+        TopicHolder<T> sampleHolder = new TopicHolder<>(initial);
 
         int status = readNextSample(specificDataReader, sampleHolder, sampleInfoHolder);
 

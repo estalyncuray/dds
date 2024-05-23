@@ -1,9 +1,9 @@
 package com.example;
 
-public class SampleHolder<T> {
+public class TopicHolder<T> {
     public T value;
 
-    public SampleHolder(T initial) {
+    public TopicHolder(T initial) {
         this.value = initial;
     }
 }

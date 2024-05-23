@@ -1,49 +1,26 @@
 package com.example;
 
-public class GenericSub extends AbstractReaderInitializer<MyTopic, MyTopicDataReader> implements Runnable {
+import DDS.DataReader;
+import DDS.DomainParticipant;
 
-    private boolean activate = false;
+public class GenericSub extends AbstractReaderInitializer<MyTopic, MyTopicDataReader, MyTopicDataReaderListenerImpl> {
+
+    @Override
+    protected String initRegisterTopicType(DomainParticipant domainParticipant) {
+        MyTopicTypeSupport typeSupport = new MyTopicTypeSupportImpl();
+        String typeName = typeSupport.get_type_name();
+        typeSupport.register_type(domainParticipant, typeName);
+        return typeName;
+    }
+
+    @Override
+    protected MyTopicDataReaderListenerImpl createDataReaderListener() {
+        return new MyTopicDataReaderListenerImpl();
+    }
 
     public static void main(String[] args) {
-        GenericSub subscriber = new GenericSub();
-        Thread thread = new Thread(subscriber);
+        GenericSub initializer = new GenericSub();
+        Thread thread = new Thread(initializer);
         thread.start();
-    }
-
-    public GenericSub() {
-        super();
-        activate = true;
-    }
-
-    @Override
-    protected String getTopicTypeSupportClassName() {
-        return "com.example.MyTopicTypeSupportImpl";
-    }
-
-    @Override
-    protected String getTopicName() {
-        return "MyTopic";
-    }
-
-    @Override
-    protected String getPartitionName() {
-        return "MyTopicPartition";
-    }
-
-    @Override
-    protected DataReaderListenerImpl createDataReaderListenerImpl() {
-        return new DataReaderListenerImpl();
-    }
-
-    @Override
-    public void run() {
-        System.out.println("-- SUBSCRIBER [opendds] --");
-        while (activate) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
