@@ -19,7 +19,7 @@
     </Domain>
     <DDSI2Service name="ddsi2">
         <General>
-            <NetworkInterfaceAddress>AUTO</NetworkInterfaceAddress>
+            <NetworkInterfaceAddress>192.168.1.210</NetworkInterfaceAddress>
             <AllowMulticast>true</AllowMulticast>
             <EnableMulticastLoopback>true</EnableMulticastLoopback>
             <CoexistWithNativeNetworking>false</CoexistWithNativeNetworking>
@@ -27,6 +27,9 @@
         <Discovery>
             <ParticipantIndex>none</ParticipantIndex>
             <SPDPInterval>30 s</SPDPInterval>
+			<Peers>
+				<Peer Address="192.168.1.210"/>
+			</Peers>
         </Discovery>
         <Internal>
             <SquashParticipants>true</SquashParticipants>

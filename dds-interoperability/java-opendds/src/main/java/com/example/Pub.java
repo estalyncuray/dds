@@ -1,6 +1,8 @@
 package com.example;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.omg.CORBA.StringSeqHolder;
 
@@ -51,12 +53,13 @@ public class Pub implements Runnable {
 			initQoSHolder();
 			domainParticipantFactory = initConfiguration();
 			domainParticipant = initDomainParticipant(domainParticipantFactory);
-			String topicTypeName = initRegisterTopicType(domainParticipant);
+			String topicTypeName = initRegisterTopicType(domainParticipant, "com.example.MyTopicTypeSupportImpl");
 			topic = initTopic(domainParticipant, "MyTopic", topicTypeName);
 			publisher = initPublisher(domainParticipant, "MyTopicPartition");
 			dataWriter = initDataWriter(publisher, topic);
 			activate = true;
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | ClassNotFoundException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException | InvocationTargetException e) {
 
 		}
 	}
@@ -98,12 +101,18 @@ public class Pub implements Runnable {
 		return dp;
 	}
 
-	private String initRegisterTopicType(DomainParticipant domainParticipant) {
-		MyTopicTypeSupport aTypeSupport = new MyTopicTypeSupportImpl();
-		String typeName = aTypeSupport.get_type_name();
-		aTypeSupport.register_type(domainParticipant, typeName);
+	private String initRegisterTopicType(DomainParticipant domainParticipant, String typeSupportClassName) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		Class<?> typeSupportClass = Class.forName(typeSupportClassName);
+		Object typeSupport = null;
+		String typeName = null;
 
-		return typeName;
+        Method registerType = typeSupportClass.getMethod("register_type", DomainParticipant.class, String.class);
+		typeSupport = typeSupportClass.newInstance();
+        Method get_type_name = typeSupportClass.getMethod("get_type_name");
+        typeName = (String) get_type_name.invoke(typeSupport);
+        registerType.invoke(typeSupport,domainParticipant,typeName);
+
+        return typeName;
 	}
 
 	private Topic initTopic(DomainParticipant domainParticipant, String topicName, String topicTypeName) {
@@ -143,8 +152,8 @@ public class Pub implements Runnable {
 
 		dataWriterQosHolder.value = DATAWRITER_QOS_DEFAULT.get();
 		publisher.get_default_datawriter_qos(dataWriterQosHolder);
-		//dataWriterQosHolder.value.representation.value = new short[1];
-		//dataWriterQosHolder.value.representation.value[0] = XCDR_DATA_REPRESENTATION.value;
+		dataWriterQosHolder.value.representation.value = new short[1];
+		dataWriterQosHolder.value.representation.value[0] = XCDR_DATA_REPRESENTATION.value;
 		publisher.set_default_datawriter_qos(dataWriterQosHolder.value);
 
 		dw = publisher.create_datawriter(topic, dataWriterQosHolder.value, null, NO_STATUS_MASK.value);

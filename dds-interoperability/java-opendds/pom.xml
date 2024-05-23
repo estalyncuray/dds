@@ -11,8 +11,8 @@
 
 	<properties>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-		<java.version>17</java.version>
-		<maven.compiler.release>17</maven.compiler.release>
+		<java.version>21</java.version>
+		<maven.compiler.release>21</maven.compiler.release>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
 
@@ -23,32 +23,29 @@
 			<groupId>org.opendds</groupId>
 			<artifactId>i2jrt</artifactId>
 			<version>3.28.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/i2jrt.jar</systemPath>
+
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.opendds</groupId>
 			<artifactId>i2jrt_corba</artifactId>
 			<version>3.28.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/i2jrt_corba.jar</systemPath>
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.opendds</groupId>
 			<artifactId>OpenDDS_DCPS</artifactId>
 			<version>3.28.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/OpenDDS_DCPS.jar</systemPath>
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.opendds</groupId>
 			<artifactId>tao_java</artifactId>
 			<version>3.28.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/tao_java.jar</systemPath>
+
 		</dependency>
 	</dependencies>
 	
